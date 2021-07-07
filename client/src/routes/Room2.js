@@ -170,7 +170,7 @@ const Room2 = (props) => {
         });
         partnerStream.current = null;
         document.getElementById('callEnded').innerHTML = 'Call ended';
-        document.getElementById('callEndedDisplay').src = '../Call-Ended.gif';
+        document.getElementById('callEndedDisplay').src = '../Call-ended.gif';
         if(sendChannel.current) sendChannel.current.send(JSON.stringify({type : 'endCall'}));
     }
 
