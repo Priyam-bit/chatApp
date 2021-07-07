@@ -211,7 +211,7 @@ const HandshakeContextProvider = (props) => {
             track.stop();
         });
         document.getElementById('callEnded').innerHTML = 'Call ended';
-        document.getElementById('callEndedDisplay').src = '../Call-Ended.gif';
+        document.getElementById('callEndedDisplay').src = '../Call-ended.gif';
         partnerStream.current = null;
     }
     return (  
