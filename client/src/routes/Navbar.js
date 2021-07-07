@@ -1,7 +1,7 @@
 import React from 'react';
 import {v4 as uuid} from 'uuid';
 import { Link } from 'react-router-dom';
-const Navbar = (props) => {
+const Navbar = () => {
     // function create(){
     //     const id = uuid();
     //     //redirect the user to newly created room

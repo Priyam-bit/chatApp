@@ -30,7 +30,7 @@ const Chatbox = () => {
         setText('');
     }
 
-    function renderMessage(message, index) {
+    function renderMessage(message) {
         if (message.yours) {
             return (
                 <div class="messages__item messages__item--operator" >
