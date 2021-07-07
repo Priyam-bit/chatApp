@@ -72,11 +72,11 @@ io.on('connection', socket=>{
 });
 
 if(process.env.PROD){
-    app.use(express.static(path.join(__dirname, './client/build')));
+    app.use(express.static(path.join(__dirname, './client/public')));
     app.get('*', (req,res)=>{
-        res.sendFile(path.join(__dirname, './client/build/index.html'));
+        res.sendFile(path.join(__dirname, './client/public/index.html'));
     });
 }
 
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
