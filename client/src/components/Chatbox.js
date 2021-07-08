@@ -45,10 +45,7 @@ const Chatbox = () => {
             </div>
         )
     }
-    if(!sendChannel.current){
-        return (null);
-    }
-    else return (  
+return (  
         <div class="container">
             <div class="chatbox">
                 <div class="chatbox__support" ref = {chatbox} id = 'chatBox'>

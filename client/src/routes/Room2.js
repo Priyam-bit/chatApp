@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import {HandshakeContext} from '../Context';
 import Chatbox from '../components/Chatbox';
+import { Link } from 'react-router-dom';
 //import { useParams } from 'react-router';
 //import MultiStreamsMixer from 'multistreamsmixer';
 
@@ -10,8 +11,9 @@ const Room2 = (props) => {
     let videoOn = true;
     let audioOn = true;
     let screenShareOn = false;
-    const {userVideo, partnerVideo, userStream, otherUser, tracksSent, callAccepted, callEnded, setCallEnded,
-        roomID, setRoomID,isVideoLoading, isPartnerVideo, partnerStream, sendChannel } = useContext(HandshakeContext);
+    const {userVideo, partnerVideo,socketRef, userStream, otherUser, tracksSent, callInitiated, callAccepted, 
+        setCallAccepted, callEnded, setCallEnded, roomID, setRoomID,isVideoLoading, isPartnerVideo, partnerStream, 
+        sendChannel } = useContext(HandshakeContext);
     useEffect(() =>{
         setRoomID(id);
     },[])
@@ -185,8 +187,33 @@ const Room2 = (props) => {
         delete e['returnValue'];
         endCall();
     });
+
+    function handleHomeClick(e){
+        if(!callInitiated || (callAccepted && !callEnded)){
+            socketRef.current.disconnect();
+            endCall();
+            otherUser.current = null;
+            setCallAccepted(false);
+            if(!callInitiated) return;
+        }
+        if(otherUser.current || !isPartnerVideo){
+            e.preventDefault();
+            alert("connection active, can't go home");
+        }
+    }
+
     return (  
         <div className = 'videoControls' >
+            <nav className = "navbar">
+                <h1>The chat App</h1>
+                <div className="links">
+                    {userStream.current && <Link to = "/" onClick = {e => handleHomeClick(e)} style = {{
+                    color: 'white',
+                    backgroundColor: '#f1356d',
+                    borderRadius: '8px'
+                    }}>Home</Link>}
+                </div>
+            </nav>
             <h3>Room id: {roomID}</h3>
             <h2 id = 'callEnded'></h2>
             <img id = 'callEndedDisplay' class = 'callEnded-png' src = '' />

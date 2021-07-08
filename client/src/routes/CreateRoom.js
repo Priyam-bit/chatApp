@@ -1,12 +1,14 @@
 //sfc to create a new room
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import {v4 as uuid} from 'uuid';
 
-const CreateRoom = (props) => {
+const CreateRoom = () => {
+    let history = useHistory();
     function create(){
         const id = uuid();
         //redirect the user to newly created room
-        props.history.push(`/room/${id}`);
+        history.push(`/room/${id}`);
     }
     return (  
         <button onClick = {create}>Create Room</button>

@@ -14,6 +14,7 @@ const HandshakeContextProvider = (props) => {
     const sendChannel = useRef();   //data channel
     const partnerStream = useRef();
     const [isVideoChat, setIsVideoChat] = useState(true);
+    const [callInitiated, setCallInitiated] = useState(false);
     const [callAccepted, setCallAccepted] = useState(false);
     const [callEnded, setCallEnded] = useState(false);
     const [roomID, setRoomID] = useState('');
@@ -73,6 +74,7 @@ const HandshakeContextProvider = (props) => {
     //function to create new user's peer and send an offer to existing user, add stream to peer object, store 
     //tracks being sent in tracksSent
     function callUser(userID){
+        setCallInitiated(true);
         peerRef.current = createPeer(userID);
         sendChannel.current = peerRef.current.createDataChannel('sendChannel');
         sendChannel.current.onmessage = handleReceiveMessage;
@@ -155,6 +157,7 @@ const HandshakeContextProvider = (props) => {
     }
     //function for new user to handle incoming answer from existing user, via server
     function handleAnswer(message){
+        setCallAccepted(true);
         const desc = new RTCSessionDescription(message.sdp);
         //setting new user's remote SDP as existing user's SDP
         peerRef.current.setRemoteDescription(desc).catch(e => console.log(e));
@@ -187,6 +190,7 @@ const HandshakeContextProvider = (props) => {
         console.log(peerRef.current);
         peerRef.current = null;
         otherUser.current = null;
+        sendChannel.current = null;
         document.getElementById('openButton').remove();
         document.getElementById('chatBox').remove();
     }
@@ -217,7 +221,8 @@ const HandshakeContextProvider = (props) => {
     return (  
         <HandshakeContext.Provider value = {{
             userVideo, partnerVideo, peerRef, socketRef, otherUser, userStream, tracksSent, roomID,
-            setRoomID, callEnded, setCallEnded, isVideoLoading, isPartnerVideo, partnerStream, sendChannel, messages, setMessages,
+            setRoomID, callInitiated, callAccepted, setCallAccepted, callEnded, setCallEnded, isVideoLoading,
+            isPartnerVideo, partnerStream, sendChannel, messages, setMessages,
         }}>
             {props.children}
         </HandshakeContext.Provider>

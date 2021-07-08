@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
+import CreateRoom from './CreateRoom';
 const Home = () => {
     const [id,setId] = useState('');
     const history = useHistory();
@@ -9,6 +11,13 @@ const Home = () => {
     }
     return ( 
         <div className="home">
+            <nav className = "navbar">
+                <h1>The chat App</h1>
+                <div className="links">
+                    <Link to = "/">Home</Link>
+                    < CreateRoom />
+                </div>
+            </nav>
             Welcome to chatApp
             <form onSubmit = {handleSubmit}>
                 <label>Enter room id:</label>
