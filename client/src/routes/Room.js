@@ -2,12 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import {HandshakeContext} from '../Context';
 import Chatbox from '../components/Chatbox';
 import { Link } from 'react-router-dom';
-//import { useParams } from 'react-router';
-//import MultiStreamsMixer from 'multistreamsmixer';
 
-const Room2 = (props) => {
+const Room = (props) => {
     const id = props.match.params.roomID;
-    //const [videoOn, setVideoOn] = useState(true);
     let videoOn = true;
     let audioOn = true;
     let screenShareOn = false;
@@ -17,13 +14,17 @@ const Room2 = (props) => {
     useEffect(() =>{
         setRoomID(id);
     },[])
+
     let screenTrack;
     function screenShare(){
         screenShareOn = !screenShareOn;
         const currentVideo = tracksSent.current.find(sender => sender.track.kind === 'video');
+        let shareBtn = document.getElementById('shareButton');
         if(screenShareOn) {
-            document.getElementById('shareButton').innerHTML = 'Stop sharing';
+            shareBtn = document.getElementById('shareButton');
             navigator.mediaDevices.getDisplayMedia({cursor : true}).then(stream =>{
+            shareBtn.innerHTML = 'Stop sharing';
+            shareBtn.title = 'Stop sharing';
             //only video captured
             screenTrack = stream.getTracks()[0];
             //replacing current video track with screenTrack
@@ -36,71 +37,71 @@ const Room2 = (props) => {
             screenTrack.onended = () => {
                 //document.getElementById('shareButton').disabled = false;
                 screenShareOn = false;
+                shareBtn.title = 'Share screen';
                 stopSharing(currentVideo);
             }
         });}
         else{
-            screenTrack.ended = true;
+            shareBtn.title = 'Share screen';
             stopSharing(currentVideo);
         }
     }
 
     function stopSharing(currentVideo){
-        //document.getElementById('stopButton').disabled = true;
         document.getElementById('shareButton').innerHTML = 'Share screen';
         if(currentVideo) currentVideo.replaceTrack(userStream.current.getTracks()[1]); 
         userVideo.current.srcObject = userStream.current;
     }
+
     function toggleVideo(){
-        //setVideoOn(!videoOn);
         videoOn = !videoOn;
         console.log(tracksSent.current);
         userStream.current.getTracks()[1].enabled = videoOn;
-        document.getElementById('toggleVid').innerHTML = (videoOn)? "&#128249;" : "&#x23F8;&#xFE0F;";
+        let ToggleVidBtn = document.getElementById('toggleVid');
+        ToggleVidBtn.innerHTML = (videoOn)? "&#128249;" : "&#x23F8;&#xFE0F;";
+        ToggleVidBtn.title = (videoOn)? 'Turn off video' : 'Turn video on';
         userVideo.current.srcObject = userStream.current;
         if(tracksSent.current){
             const currentVideo = tracksSent.current.find(sender => sender.track.kind === 'video');
             if(currentVideo) currentVideo.replaceTrack(userStream.current.getTracks()[1]); 
         } 
     }
+
     const toggleAudio = ()=>{
         audioOn = !audioOn;
         console.log(tracksSent.current);
-        const toggleAud = document.getElementById('toggleAud');
-        //document.getElementById('localVid').muted = !audioOn;
+        let toggleAud = document.getElementById('toggleAud');
         console.log(audioOn);
         userStream.current.getTracks()[0].enabled = audioOn;
         toggleAud.innerHTML = (audioOn)? "&#128266;" : "&#128263;";
+        toggleAud.title = (audioOn)? 'Mute' : 'Unmute';
         userVideo.current.srcObject = userStream.current;
         if(tracksSent.current){
             const currentAudio = tracksSent.current.find(sender => sender.track.kind === 'audio');
             if(currentAudio) currentAudio.replaceTrack(userStream.current.getTracks()[1]); 
         } 
     }
+
     async function changeFilter() {
         console.log(document.querySelector('select#filter').value);
         const localVid = document.getElementById('localVid');
         console.log(localVid);
         localVid.className = document.querySelector('select#filter').value;
-        let a = JSON.stringify({type : 'filter', data : localVid.className});
-        console.log(a);
-        //sendChannel.current.send(localVid.className);
-        if(sendChannel.current) sendChannel.current.send(a);
-        // var stream = await localVid.captureStream(25);
-        // console.log(stream.getTracks()[1]);
-        // if(tracksSent.current){
-        //     const currentVideo = tracksSent.current.find(sender => sender.track.kind === 'video');
-        //     if(currentVideo) currentVideo.replaceTrack(stream.getTracks()[1]); 
-        // }
+        let filter = JSON.stringify({type : 'filter', data : localVid.className});
+        console.log(filter);
+        if(sendChannel.current) sendChannel.current.send(filter);
     };
+
     const requestPictureInPicture = ()=>{
-        const picInPicBtn = document.getElementById('picInPic');
+        let picInPicBtn = document.getElementById('picInPic');
         if(document.pictureInPictureElement){
             document.exitPictureInPicture()
             picInPicBtn.innerHTML = '&#8664';
+            picInPicBtn.title = 'Miniplayer';
         }else{
             userVideo.current.requestPictureInPicture();
             picInPicBtn.innerHTML = '&#8662';
+            picInPicBtn.title = 'Default view';
         }
     }
     document.addEventListener("keypress", function(e) {
@@ -118,53 +119,7 @@ const Room2 = (props) => {
           }
         }
     }
-    var vid = document.getElementById('localVid');
     
-// // Optional frames per second argument.
-//     useEffect(()=>{
-//         if(isVideoLoading || !isPartnerVideo) return;
-//         const Mixer = new MultiStreamsMixer([userStream,partnerStream]);
-//         var stream = Mixer.getMixedStream();
-//         var recordedChunks = [];
-
-//         console.log(stream);
-//         var options = { mimeType: "video/webm; codecs=vp9" };
-//         const mediaRecorder = new MediaRecorder(stream, options);
-
-//         mediaRecorder.ondataavailable = handleDataAvailable;
-//         mediaRecorder.start();
-
-//         function handleDataAvailable(event) {
-//         console.log("data-available");
-//         if (event.data.size > 0) {
-//             recordedChunks.push(event.data);
-//             console.log(recordedChunks);
-//             download();
-//         } else {
-//             // ...
-//         }
-//         }
-//         function download() {
-//             var blob = new Blob(recordedChunks, {
-//                 type: "video/webm"
-//             });
-//             var url = URL.createObjectURL(blob);
-//             var a = document.createElement("a");
-//             document.body.appendChild(a);
-//             a.style = "display: none";
-//             a.href = url;
-//             a.download = "test.webm";
-//             a.click();
-//             window.URL.revokeObjectURL(url);
-//         }
-
-//         // demo: to download after 9sec
-//         setTimeout(event => {
-//             console.log("stopping");
-//             mediaRecorder.stop();
-//         }, 9000);
-//     },[isVideoLoading]);
-
     function endCall(){
         setCallEnded(true);
         userStream.current.getTracks().forEach(function(track) {
@@ -216,16 +171,18 @@ const Room2 = (props) => {
             </nav>
             <h3>Room id: {roomID}</h3>
             <h2 id = 'callEnded'></h2>
-            <img id = 'callEndedDisplay' class = 'callEnded-png' src = '' />
-            {userStream && !callEnded && (<video controls id = 'localVid' muted style = {{height: 500, width: 500}} autoPlay ref = {userVideo} />)}
-            {tracksSent && !callEnded && (<video controls id = 'partnerVid' style = {{height: 500, width: 500}} autoPlay ref = {partnerVideo} />)}
+            <img id = 'callEndedDisplay' className = 'callEnded-png' src = '' />
+            <div className="videos">
+                {userStream && !callEnded && (<video controls id = 'localVid' muted = 'muted' style = {{height: 500, width: 500}} autoPlay ref = {userVideo} />)}
+                {tracksSent && !callEnded && (<video controls id = 'partnerVid' style = {{height: 500, width: 500}} autoPlay ref = {partnerVideo} />)}
+            </div>
             <div className = "btn-group">
-                {!callEnded && (<button onClick = {screenShare} disabled = {isVideoLoading } id = 'shareButton'>Share screen</button>)}
-                {!callEnded && (<button onClick = {toggleVideo} disabled = {isVideoLoading } id = 'toggleVid'>&#128249;</button>)}
-                {!callEnded && (<button onClick = {toggleAudio} disabled = {isVideoLoading } id = 'toggleAud'>&#128266;</button>)}
-                {!callEnded && (<button onClick = {requestPictureInPicture} disabled = {!isPartnerVideo} id = 'picInPic'>&#8664;</button>)}
-                {!callEnded && (<button onClick = {toggleFullScreen} disabled = {!isPartnerVideo} id = 'fullScreen'>Full screen</button>)}
-                {!callEnded && (<button onClick = {endCall}>End call</button>)}
+                {!callEnded && (<button onClick = {screenShare} disabled = {isVideoLoading } id = 'shareButton' title = 'Share screen'>Share screen</button>)}
+                {!callEnded && (<button onClick = {toggleVideo} disabled = {isVideoLoading } id = 'toggleVid' title = 'Turn off video'>&#128249;</button>)}
+                {!callEnded && (<button onClick = {toggleAudio} disabled = {isVideoLoading } id = 'toggleAud' title = 'Mute'>&#128266;</button>)}
+                {!callEnded && (<button onClick = {requestPictureInPicture} disabled = {!isPartnerVideo} id = 'picInPic' title = 'Miniplayer'>&#8664;</button>)}
+                {!callEnded && (<button onClick = {toggleFullScreen} disabled = {!isPartnerVideo} id = 'fullScreen' title = 'Fullscreen'>Full screen</button>)}
+                {!callEnded && (<button onClick = {endCall} title = 'End call'>End call</button>)}
                 {!callEnded && (<label >Filter: </label>)}
                 {!callEnded && (<select id="filter" onChange = {changeFilter}>
                     <option value="none">None</option>
@@ -240,4 +197,4 @@ const Room2 = (props) => {
     );
 }
  
-export default Room2;
+export default Room;

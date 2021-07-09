@@ -24,7 +24,7 @@ const Home = () => {
                 <input type = 'text' required value = {id} onChange = {(e)=> setId(e.target.value)} />
                 <button>Join room</button>
             </form>
-            <img class="CupTalk-gif" src = '../cupTalkWeb.gif' />
+            <img className="CupTalk-gif" src = '../cupTalkWeb.gif' />
         </div>
     );
 }

@@ -261,6 +261,12 @@ body {
 }
 
 
+.msgStatus{
+  width: 36px;
+  height: 29px;
+}
+
+
 /* HEADER */
 .chatbox__header {
   position: sticky;

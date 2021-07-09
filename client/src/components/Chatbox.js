@@ -14,6 +14,7 @@ const Chatbox = () => {
         isOpen = !isOpen;
         if(isOpen){
             chatbox.current.classList.add('chatbox--active');
+            document.getElementById('msgStatus').src = '../chatbox-icon.svg';
         }
         else{
             chatbox.current.classList.remove('chatbox--active');
@@ -30,40 +31,40 @@ const Chatbox = () => {
         setText('');
     }
 
-    function renderMessage(message) {
+    function renderMessage(message,index) {
         if (message.yours) {
             return (
-                <div class="messages__item messages__item--operator" >
+                <div className="messages__item messages__item--operator" key = {index}>
                     {message.value}
                 </div>
             )
         }
 
         return (
-            <div class="messages__item messages__item--visitor" >
+            <div className="messages__item messages__item--visitor" key = {index}>
                 {message.value}
             </div>
         )
     }
 return (  
-        <div class="container">
-            <div class="chatbox">
-                <div class="chatbox__support" ref = {chatbox} id = 'chatBox'>
-                    <div class="chatbox__header">
-                        <div class="chatbox__content--header">
-                            <h4 class="chatbox__heading--header">Chat</h4>
+        <div className="container">
+            <div className="chatbox">
+                <div className="chatbox__support" ref = {chatbox} id = 'chatBox'>
+                    <div className="chatbox__header">
+                        <div className="chatbox__content--header">
+                            <h4 className="chatbox__heading--header">Chat</h4>
                         </div>
                     </div>
-                    <div class="chatbox__messages">
+                    <div className="chatbox__messages">
                         {messages.map(renderMessage)}
                     </div>
-                    <div class="chatbox__footer"> 
+                    <div className="chatbox__footer"> 
                         <input type="text" value={text} onChange={handleChange} placeholder="Write a message..." />
-                        {<button class="chatbox__send--footer" onClick={sendMessage}>Send</button>}
+                        {<button className="chatbox__send--footer" onClick={sendMessage}>Send</button>}
                     </div>
                 </div>
-                <div class="chatbox__button">
-                    <button onClick = {toggleState} ref = {openButton} id = 'openButton'><img src = "../chatbox-icon.svg" ></img></button>
+                <div className="chatbox__button">
+                    <button onClick = {toggleState} ref = {openButton} id = 'openButton'><img id = 'msgStatus' className = 'msgStatus' src = "../chatbox-icon.svg" ></img></button>
                 </div>
             </div>
         </div>

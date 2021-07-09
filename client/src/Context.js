@@ -206,7 +206,11 @@ const HandshakeContextProvider = (props) => {
         //partnerVideo.current.className = e.data;
         const parsed = JSON.parse(e.data);
         if(parsed.type === 'filter') partnerVideo.current.className = parsed.data;
-        if(parsed.type === 'textMessage') setMessages(messages => [{yours: false, value: parsed.data}, ...messages]);
+        if(parsed.type === 'textMessage') {
+            setMessages(messages => [{yours: false, value: parsed.data}, ...messages]);
+            let msgStatusPic = document.getElementById('msgStatus');
+            msgStatusPic.src = '../chatbox-icon-msg.png';
+        }
         else if(parsed.type === 'endCall') leaveCall();
     }
     function leaveCall(){
