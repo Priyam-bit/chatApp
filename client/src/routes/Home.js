@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import CreateRoom from './CreateRoom';
+import CreateRoom from '../components/CreateRoom';
 
 //sfc representing home page
 const Home = () => {
@@ -26,7 +26,7 @@ const Home = () => {
                 <input type = 'text' required value = {id} onChange = {(e)=> setId(e.target.value)} />
                 <button>Join room</button>
             </form>
-            <img className="CupTalk-gif" src = '../cupTalkWeb.gif' />
+            <img className="CupTalk-gif" src = '../cupTalkWeb.gif' alt = 'CupTalk-gif' />
         </div>
     );
 }

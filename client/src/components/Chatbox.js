@@ -64,7 +64,7 @@ return (
                     </div>
                 </div>
                 <div className="chatbox__button">
-                    <button onClick = {toggleState} ref = {openButton} id = 'openButton'><img id = 'msgStatus' className = 'msgStatus' src = "../chatbox-icon.svg" ></img></button>
+                    <button onClick = {toggleState} ref = {openButton} id = 'openButton'><img id = 'msgStatus' className = 'msgStatus' src = "../chatbox-icon.svg" alt = 'chat'></img></button>
                 </div>
             </div>
         </div>

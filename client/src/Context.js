@@ -22,7 +22,7 @@ const HandshakeContextProvider = (props) => {
     const [messages, setMessages] = useState([]);   //chatbox messages
 
     useEffect(() => {
-        if(roomID == '') return;
+        if(roomID === '') return;
         setIsVideoLoading(true);
         const abortCont =  new AbortController();
         //whole handshake process will take place on initial render
