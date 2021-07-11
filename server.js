@@ -36,23 +36,19 @@ io.on('connection', socket=>{
         console.log('offer received');
         io.to(payload.target).emit('offer', payload);
     });
+
     //send the existing user's answer to new user
     socket.on('answer', payload =>{ //{target,sdp}
         console.log('answer sent')
         io.to(payload.target).emit('answer', payload);
     });
+
     //send the ice candidates back and forth to both peers until mutual agreement
     socket.on('ice-candidate', incoming =>{  //{target,candidate}
         io.to(incoming.target).emit('ice-candidate', incoming.candidate);
     });
+
     //handle user leaving the room
-    // socket.on('disconnecting', () => {
-    //     console.log(disconnecting);
-    //     var self = this;
-    //     var room = self.rooms;
-    //     console.log(room);
-    //     io.to(room).emit('user left');
-    // });
     socket.on('disconnect', (reason) => {
         if (reason === "io server disconnect") {
           // the disconnection was initiated by the server, you need to reconnect manually
@@ -60,12 +56,10 @@ io.on('connection', socket=>{
         }
         const roomID = socketRoom[socket.id];  //id of the room, which the user left
         let room = rooms[roomID];     //the room, which the user left
-        console.log('user left room ' + roomID);
+        console.log('user ' + socket.id +  ' left the room ' + roomID);
         if(room){
             room = room.filter(id => id !== socket.id);   //removing the user from the room insatnce
             rooms[roomID] = room;   //updating the actual room
-            console.log(room);
-            console.log(rooms);
             if(rooms[roomID].length !== 0) socket.to(rooms[roomID]).emit('user left');
         }
     });

@@ -10,17 +10,16 @@ const HandshakeContextProvider = (props) => {
     const socketRef = useRef();   //represents the socket between us and socket io server 
     const otherUser = useRef();   //to keep track of other user's ID
     const userStream = useRef();   //represents our own stream
-    const tracksSent = useRef([]);  //stores the tracks(audio and video) being sent to other peer, returned by addTrack. We can change what we send using this
+    const tracksSent = useRef([]);  //stores the tracks(audio and video) being sent to other peer
     const sendChannel = useRef();   //data channel
-    const partnerStream = useRef();
-    const [isVideoChat, setIsVideoChat] = useState(true);
-    const [callInitiated, setCallInitiated] = useState(false);
+    const partnerStream = useRef();    //remote peer's stream
+    const [callInitiated, setCallInitiated] = useState(false); 
     const [callAccepted, setCallAccepted] = useState(false);
     const [callEnded, setCallEnded] = useState(false);
     const [roomID, setRoomID] = useState('');
     const [isVideoLoading, setIsVideoLoading] = useState(true);
     const [isPartnerVideo, setIsPartnerVideo] = useState(false);
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([]);   //chatbox messages
 
     useEffect(() => {
         if(roomID == '') return;
@@ -32,7 +31,6 @@ const HandshakeContextProvider = (props) => {
             //mount it on the userVideo element
             userVideo.current.srcObject = stream;
             userStream.current = stream;
-            console.log('passed ' + roomID);
             //connect user to socket
             socketRef.current = io.connect('/', {
                 'sync disconnect on unload': true});
@@ -202,8 +200,8 @@ const HandshakeContextProvider = (props) => {
         if(partnerVideo.current) partnerVideo.current.srcObject = e.streams[0]
     }
 
+    //function to handle incoming messages from data channel
     function handleReceiveMessage(e){
-        //partnerVideo.current.className = e.data;
         const parsed = JSON.parse(e.data);
         if(parsed.type === 'filter') partnerVideo.current.className = parsed.data;
         if(parsed.type === 'textMessage') {
@@ -213,6 +211,8 @@ const HandshakeContextProvider = (props) => {
         }
         else if(parsed.type === 'endCall') leaveCall();
     }
+
+    //function to stop inputting user stream and render the page, when call is ended
     function leaveCall(){
         setCallEnded(true);
         userStream.current.getTracks().forEach(function(track) {

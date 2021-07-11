@@ -31,7 +31,6 @@ const Room = (props) => {
             if(tracksSent.current){
                 if(currentVideo) currentVideo.replaceTrack(screenTrack); 
             }
-            console.log(tracksSent.current);
             userVideo.current.srcObject = stream;
             //replace screenTrack with userStream video track after screen sharing ends
             screenTrack.onended = () => {
@@ -47,15 +46,16 @@ const Room = (props) => {
         }
     }
 
+    //function to stopsharing the screen
     function stopSharing(currentVideo){
         document.getElementById('shareButton').innerHTML = 'Share screen';
         if(currentVideo) currentVideo.replaceTrack(userStream.current.getTracks()[1]); 
         userVideo.current.srcObject = userStream.current;
     }
 
+    //function to turn video on/off 
     function toggleVideo(){
         videoOn = !videoOn;
-        console.log(tracksSent.current);
         userStream.current.getTracks()[1].enabled = videoOn;
         let ToggleVidBtn = document.getElementById('toggleVid');
         ToggleVidBtn.innerHTML = (videoOn)? "&#128249;" : "&#x23F8;&#xFE0F;";
@@ -67,11 +67,10 @@ const Room = (props) => {
         } 
     }
 
+    //function to turn audio on/off
     const toggleAudio = ()=>{
         audioOn = !audioOn;
-        console.log(tracksSent.current);
         let toggleAud = document.getElementById('toggleAud');
-        console.log(audioOn);
         userStream.current.getTracks()[0].enabled = audioOn;
         toggleAud.innerHTML = (audioOn)? "&#128266;" : "&#128263;";
         toggleAud.title = (audioOn)? 'Mute' : 'Unmute';
@@ -82,16 +81,15 @@ const Room = (props) => {
         } 
     }
 
+    //function to apply filter when user selects a filter
     async function changeFilter() {
-        console.log(document.querySelector('select#filter').value);
         const localVid = document.getElementById('localVid');
-        console.log(localVid);
         localVid.className = document.querySelector('select#filter').value;
         let filter = JSON.stringify({type : 'filter', data : localVid.className});
-        console.log(filter);
         if(sendChannel.current) sendChannel.current.send(filter);
     };
 
+    //function to activate/ deactivate minplayer mode when user clicks the corresponding button
     const requestPictureInPicture = ()=>{
         let picInPicBtn = document.getElementById('picInPic');
         if(document.pictureInPictureElement){
@@ -104,22 +102,26 @@ const Room = (props) => {
             picInPicBtn.title = 'Default view';
         }
     }
+
+    //function to escape full screen mode using esc key
     document.addEventListener("keypress", function(e) {
         if (e.key === 'Escape') {
           toggleFullScreen();
         }
       }, false);
 
+    //function to enable / disable full screen mode when user clicks on fullscreen button  
     function toggleFullScreen() {
         if (!document.fullscreenElement) {
             partnerVideo.current.requestFullscreen();
         } else {
-            document.exitPictureInPicture();
           if (document.exitFullscreen) {
+            document.exitFullscreen();
           }
         }
     }
     
+    //function to endcall and render the elements on browser 
     function endCall(){
         setCallEnded(true);
         userStream.current.getTracks().forEach(function(track) {
@@ -128,21 +130,17 @@ const Room = (props) => {
         partnerStream.current = null;
         document.getElementById('callEnded').innerHTML = 'Call ended';
         document.getElementById('callEndedDisplay').src = '../Call-ended.gif';
+        //notify other user that call has ended
         if(sendChannel.current) sendChannel.current.send(JSON.stringify({type : 'endCall'}));
     }
 
-    function handleReload(){
-        setTimeout(function(){ 
-            endCall();
-            console.log("Please join a new room");
-        }, 1000);
-    }
-
+    //function to end call if user closes window
     window.addEventListener("beforeunload", (e) =>{
         delete e['returnValue'];
         endCall();
     });
 
+    //function to handle user clicking home link during meeting
     function handleHomeClick(e){
         if(!callInitiated || (callAccepted && !callEnded)){
             socketRef.current.disconnect();

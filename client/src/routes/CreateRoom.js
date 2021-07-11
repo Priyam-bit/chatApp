@@ -1,8 +1,8 @@
-//sfc to create a new room
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import {v4 as uuid} from 'uuid';
 
+//sfc to create a new room
 const CreateRoom = () => {
     let history = useHistory();
     function create(){

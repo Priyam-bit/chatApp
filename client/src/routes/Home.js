@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import CreateRoom from './CreateRoom';
+
+//sfc representing home page
 const Home = () => {
     const [id,setId] = useState('');
     const history = useHistory();
